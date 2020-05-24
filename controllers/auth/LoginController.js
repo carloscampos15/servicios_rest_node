@@ -50,7 +50,7 @@ var LoginController = {
                   token: jwt.createToken(user)
                 });
               } else {
-                return res.status(200).send({
+                return res.status(400).send({
                   message: "Login error",
                   status: "error",
                 });

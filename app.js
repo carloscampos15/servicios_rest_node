@@ -9,6 +9,7 @@ var app = express();
 
 //Cargar rutas
 var authRoutes = require('./routes/Auth');
+var userRoutes = require('./routes/User');
 
 // Middlewares
 app.use(bodyParser.urlencoded({extended: false}));
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 
 // Rutas
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 
 //exportamos el modulo
 module.exports = app;
