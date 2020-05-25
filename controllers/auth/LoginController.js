@@ -19,7 +19,7 @@ var LoginController = {
     //Validar los datos
     validator(params, validationRule, {}, (err, status) => {
       if (!status) {
-        res.status(412).send({
+        return res.status(412).send({
           success: false,
           message: "Login failed",
           data: err,
@@ -62,9 +62,6 @@ var LoginController = {
             });
           }
         });
-        // return res.status(200).send({
-        //   message: "Hola mundo",
-        // });
       }
     });
   },
