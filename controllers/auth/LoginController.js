@@ -47,7 +47,7 @@ var LoginController = {
                   message: "Login succesfull",
                   status: "success",
                   user,
-                  token: jwt.createToken(user)
+                  token: jwt.createToken(user),
                 });
               } else {
                 return res.status(400).send({
