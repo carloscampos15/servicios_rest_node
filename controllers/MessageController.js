@@ -28,7 +28,7 @@ var MessageController = {
       } else {
         // Asignar clave email para cada receptor en el array de receptores
         params.receptors.forEach((email, index) => {
-          params.receptors[index] = { email: email };
+          params.receptors[index] = { email: email, state: "RECIBIDO" };
         });
 
         // Crear el mensaje
@@ -129,6 +129,19 @@ var MessageController = {
               }
             }
           );
+          // // console.log(item)
+          // console.log("email" + item.sender_email)
+          // console.log("message_id" + message._id)
+          // console.log("user email" + user.email)
+          // User.updateOne(
+          //   { email: item.sender_email, "sended_messages._id": message._id, "receptors.email": user.email },
+          //   { $set: { "receptors.$.state": "VISTO" } },
+          //   (err) => {
+          //     if (err) {
+          //       console.log(err);
+          //     }
+          //   }
+          // );
         }
       });
 
@@ -153,21 +166,21 @@ var MessageController = {
   showSend: function (req, res) {
     var user = req.user;
     User.findOne({ email: user.email }, (err, user) => {
-      var message;
-
-      user.sended_messages.forEach((item) => {
-        if (item._id == req.params.message_id) {
-          message = item;
-        }
-      });
-
-      if (!message) {
-        return res.status(404).send({
-          message: "No se encontro el recurso",
-        });
-      }
-
       try {
+        var message;
+
+        user.sended_messages.forEach((item) => {
+          if (item._id == req.params.message_id) {
+            message = item;
+          }
+        });
+
+        if (!message) {
+          return res.status(404).send({
+            message: "No se encontro el recurso",
+          });
+        }
+
         return res.status(200).send({
           status: "success",
           message: message,
