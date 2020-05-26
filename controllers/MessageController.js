@@ -26,7 +26,7 @@ var MessageController = {
           data: err,
         });
       } else {
-        // Asignar claves para los emails de cada receptor
+        // Asignar clave email para cada receptor en el array de receptores
         params.receptors.forEach((email, index) => {
           params.receptors[index] = { email: email };
         });
@@ -38,26 +38,19 @@ var MessageController = {
         message.receptors = params.receptors;
         message.subject = params.subject;
         message.body = params.body;
-        message.estate = "ENVIADO";
+        message.state = "RECIBIDO";
 
         // Guardar el mensaje
         message.save((err, messageStored) => {
           try {
-            // Si el usuario no se guarda
+            // Si el usuario no se guarda retornar error
             if (!messageStored) {
               return res.status(400).send({
                 message: "El mensaje no se ha guardado",
               });
             }
 
-            //Agregar el mensaje enviado al usuario que lo envio
-            User.findOneAndUpdate(
-              { email: userEmisor.email },
-              { $push: { sended_messages: messageStored } },
-              (err, result) => {}
-            );
-
-            //Agregar el mensaje a los usuarios que lo rebiciran
+            // Agregar el mensaje a los usuarios que lo rebiciran
             params.receptors.forEach((receptor) => {
               User.findOneAndUpdate(
                 { email: receptor.email },
@@ -65,6 +58,14 @@ var MessageController = {
                 (err, result) => {}
               );
             });
+
+            // Agregar el mensaje enviado al usuario que lo envio
+            messageStored.state = "ENVIADO";
+            User.findOneAndUpdate(
+              { email: userEmisor.email },
+              { $push: { sended_messages: messageStored } },
+              (err, result) => {}
+            );
 
             //Una vez guardado el mensaje, devolverlo al usuario con un codigo success
             return res.status(200).send({
@@ -116,9 +117,18 @@ var MessageController = {
     User.findOne({ email: user.email }, (err, user) => {
       var message;
 
-      user.received_messages.forEach((item) => {
+      user.received_messages.forEach((item, index) => {
         if (item._id == req.params.message_id) {
           message = item;
+          User.updateOne(
+            { _id: user.id, "received_messages._id": message._id },
+            { $set: { "received_messages.$.state": "VISTO" } },
+            (err) => {
+              if (err) {
+                console.log(err);
+              }
+            }
+          );
         }
       });
 
@@ -189,7 +199,7 @@ var MessageController = {
 
       try {
         user.received_messages.forEach((element, index) => {
-          if(element._id == req.params.message_id){
+          if (element._id == req.params.message_id) {
             user.received_messages.splice(index, 1);
           }
         });

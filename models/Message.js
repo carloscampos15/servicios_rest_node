@@ -11,7 +11,7 @@ var messageSchema = schema({
     subject: String,
     body: String,
     created_at: { type : String, default: moment().format("YYYY-MM-DD") },
-    estate: String
+    state: String
 });
 
 module.exports = mongoose.model('Message', messageSchema);
