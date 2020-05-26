@@ -32,6 +32,10 @@ var RegisterController = {
         user.lastname = params.lastname;
         user.email = params.email;
 
+        if(params.role){
+          user.role = params.role;
+        }
+
         //Buscar el usuario en la base de datos
         User.findOne({ email: user.email }, function (err, issetUser) {
           try {

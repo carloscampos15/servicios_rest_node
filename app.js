@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 // Rutas
 app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/message', messageRoutes);
 
 //exportamos el modulo

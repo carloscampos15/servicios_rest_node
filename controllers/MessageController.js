@@ -111,14 +111,42 @@ var MessageController = {
       }
     });
   },
-  show: function (req, res) {
+  showReceive: function (req, res) {
     var user = req.user;
-    var params = req.body; //id_message
     User.findOne({ email: user.email }, (err, user) => {
       var message;
 
       user.received_messages.forEach((item) => {
-        if (item._id == params.message_id) {
+        if (item._id == req.params.message_id) {
+          message = item;
+        }
+      });
+
+      if (!message) {
+        return res.status(404).send({
+          message: "No se encontro el recurso",
+        });
+      }
+
+      try {
+        return res.status(200).send({
+          status: "success",
+          message: message,
+        });
+      } catch (err) {
+        return res.status(500).send({
+          message: "Error al obtener la informacion",
+        });
+      }
+    });
+  },
+  showSend: function (req, res) {
+    var user = req.user;
+    User.findOne({ email: user.email }, (err, user) => {
+      var message;
+
+      user.sended_messages.forEach((item) => {
+        if (item._id == req.params.message_id) {
           message = item;
         }
       });
@@ -143,7 +171,6 @@ var MessageController = {
   },
   deleteInbox: function (req, res) {
     var user = req.user;
-    var params = req.body;
 
     User.findOne({ email: user.email }, (err, user) => {
       var message;
